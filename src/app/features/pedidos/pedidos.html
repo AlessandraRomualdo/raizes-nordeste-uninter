@@ -1,0 +1,100 @@
+<main class="app-screen">
+  <header class="app-topbar">
+    <a class="icon-button" routerLink="/cardapio" aria-label="Voltar ao cardápio">
+      <span class="material-icons" aria-hidden="true">arrow_back</span>
+    </a>
+    <strong>STATUS DO PEDIDO</strong>
+    <button class="icon-button" type="button" aria-label="Ajuda">
+      <span class="material-icons" aria-hidden="true">help_outline</span>
+    </button>
+  </header>
+
+  <section class="content-stack">
+    @if (!store.activeOrder()) {
+      <article class="empty-state">
+        <span class="material-icons" aria-hidden="true">receipt_long</span>
+        <h1>Nenhum pedido ativo</h1>
+        <p>Monte um pedido no cardápio para acompanhar o preparo por aqui.</p>
+        <a class="primary-button" routerLink="/cardapio">Começar pedido</a>
+      </article>
+    } @else {
+      <section class="status-hero" aria-label="Previsão do pedido">
+        <span>Tempo estimado para {{ store.activeOrder()?.fulfillment === 'pickup' ? 'retirada' : 'entrega' }}</span>
+        <strong>{{ countdown() }}</strong>
+        <p>{{ remainingSeconds() > 0 ? 'Seu pedido está sendo preparado.' : 'Seu pedido está pronto para a próxima etapa.' }}</p>
+      </section>
+
+      <section class="timeline" aria-label="Status do pedido">
+        <article class="is-done">
+          <span class="material-icons" aria-hidden="true">check</span>
+          <div><strong>Pedido Recebido</strong><small>Confirmado às 12:15</small></div>
+        </article>
+        <article class="is-current">
+          <span class="material-icons" aria-hidden="true">restaurant</span>
+          <div><strong>Na Cozinha</strong><small>Preparando seu Acarajé</small></div>
+        </article>
+        <article>
+          <span class="material-icons" aria-hidden="true">
+            {{ store.activeOrder()?.fulfillment === 'pickup' ? 'shopping_bag' : 'delivery_dining' }}
+          </span>
+          <div>
+            <strong>{{ store.activeOrder()?.fulfillment === 'pickup' ? 'Pronto para Retirada' : 'Saiu para Entrega' }}</strong>
+            <small>Aguardando finalização</small>
+          </div>
+        </article>
+      </section>
+
+      <section class="status-metrics" aria-label="Métricas do pedido">
+        <article><span>Número do pedido</span><strong>{{ store.activeOrder()?.code }}</strong></article>
+        <article><span>Total pago</span><strong>{{ store.money(store.activeOrder()?.total ?? 0) }}</strong></article>
+      </section>
+
+      <article class="summary-card">
+        <div class="section-heading compact">
+          <h2>Resumo do Pedido</h2>
+          <span>{{ orderItems().length }} itens</span>
+        </div>
+        @for (item of orderItems(); track item.product.id) {
+          <div class="order-line">
+            <img [src]="item.product.image" [alt]="item.product.name" />
+            <span><strong>{{ item.product.name }}</strong><small>{{ item.product.description }}</small></span>
+            <em>{{ item.quantity }}x</em>
+          </div>
+        }
+        <div>
+          <span>{{ store.activeOrder()?.fulfillment === 'pickup' ? 'Retirada' : 'Taxa de entrega' }}</span>
+          <strong [class.free-text]="store.activeOrder()?.fulfillment === 'pickup'">
+            {{ store.activeOrder()?.fulfillment === 'pickup' ? 'Grátis' : store.money(store.activeOrder()?.deliveryFee ?? 0) }}
+          </strong>
+        </div>
+      </article>
+
+      <section class="pickup-card" aria-label="Local de retirada">
+        <h2>{{ store.activeOrder()?.fulfillment === 'pickup' ? 'Onde Retirar' : 'Origem da Entrega' }}</h2>
+        <div class="map-mock">
+          <img src="/map.png" alt="Mapa da unidade selecionada" />
+        </div>
+        <article>
+          <span class="material-icons" aria-hidden="true">storefront</span>
+          <div>
+            <strong>Raízes do Nordeste - {{ store.activeOrder()?.unit?.name }}</strong>
+            <small>{{ store.activeOrder()?.unit?.address }}</small>
+          </div>
+          <button type="button" aria-label="Ver rota"><span class="material-icons">navigation</span></button>
+        </article>
+      </section>
+
+      <a class="help-link" routerLink="/cardapio">
+        <span class="material-icons" aria-hidden="true">chat_bubble_outline</span>
+        Precisa de ajuda com o pedido?
+      </a>
+    }
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <a routerLink="/cardapio"><span class="material-icons">restaurant_menu</span>Cardápio</a>
+    <a routerLink="/carrinho"><span class="material-icons">shopping_basket</span>Carrinho</a>
+    <a routerLink="/pedidos" class="is-active"><span class="material-icons">receipt_long</span>Pedidos</a>
+    <a routerLink="/perfil"><span class="material-icons">person</span>Perfil</a>
+  </nav>
+</main>

@@ -1,0 +1,57 @@
+<main class="app-screen">
+  <header class="app-topbar">
+    <a class="icon-button" routerLink="/inicio" aria-label="Voltar ao login">
+      <span class="material-icons" aria-hidden="true">arrow_back</span>
+    </a>
+    <strong>ESCOLHA A UNIDADE</strong>
+    <button class="icon-button" type="button" aria-label="Localização">
+      <span class="material-icons" aria-hidden="true">my_location</span>
+    </button>
+  </header>
+
+  <section class="content-stack">
+    <div class="hero-copy">
+      <span>Cardápio por franquia</span>
+      <h1>Onde você gostaria de pedir?</h1>
+      <p>Cada unidade possui disponibilidade, horário e operação própria.</p>
+    </div>
+
+    <section class="unit-list" aria-label="Unidades disponíveis">
+      @for (unit of store.units(); track unit.id) {
+        <article class="unit-card" [class.unit-card--closed]="!unit.isOpen">
+          <div class="unit-card__top">
+            <span class="material-icons" aria-hidden="true">storefront</span>
+            <div>
+              <h2>{{ unit.name }}</h2>
+              <p>{{ unit.city }}</p>
+            </div>
+            <strong>{{ unit.distance }}</strong>
+          </div>
+
+          <p class="unit-address">{{ unit.address }}</p>
+
+          <div class="unit-tags">
+            <span>{{ unit.hours }}</span>
+            <span>{{ unit.format }}</span>
+          </div>
+
+          <small>{{ unit.highlight }}</small>
+
+          <button
+            class="primary-button"
+            type="button"
+            [disabled]="!unit.isOpen"
+            (click)="chooseUnit(unit.id)"
+          >
+            @if (unit.isOpen) {
+              Ver cardápio
+              <span class="material-icons" aria-hidden="true">arrow_forward</span>
+            } @else {
+              Fechada no momento
+            }
+          </button>
+        </article>
+      }
+    </section>
+  </section>
+</main>

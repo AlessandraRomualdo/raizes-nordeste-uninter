@@ -1,0 +1,99 @@
+<main class="app-screen">
+  <header class="app-topbar">
+    <a class="icon-button" routerLink="/cardapio" aria-label="Voltar ao cardápio">
+      <span class="material-icons" aria-hidden="true">arrow_back</span>
+    </a>
+    <strong>CARRINHO</strong>
+    <a class="icon-button" routerLink="/perfil" aria-label="Abrir perfil">
+      <span class="material-icons" aria-hidden="true">person</span>
+    </a>
+  </header>
+
+  <section class="content-stack">
+    <div class="section-heading">
+      <h1>Seu pedido</h1>
+      <span>{{ store.cartCount() }} itens</span>
+    </div>
+
+    @if (store.selectedUnit()) {
+      <a class="unit-switch" routerLink="/unidades">
+        <span class="material-icons" aria-hidden="true">storefront</span>
+        Unidade {{ store.selectedUnit()?.name }}
+      </a>
+    }
+
+    @if (store.cart().length === 0) {
+      <article class="empty-state">
+        <span class="material-icons" aria-hidden="true">shopping_basket</span>
+        <h2>Carrinho vazio</h2>
+        <p>Adicione um item do cardápio para começar seu pedido.</p>
+        <a class="primary-button" [routerLink]="store.selectedUnit() ? '/cardapio' : '/unidades'">Ver cardápio</a>
+      </article>
+    } @else {
+      <section class="fulfillment-options" aria-label="Escolha retirada ou entrega">
+        <button
+          class="fulfillment-option"
+          type="button"
+          [class.is-active]="store.selectedFulfillment() === 'pickup'"
+          (click)="store.setFulfillment('pickup')"
+        >
+          <span class="material-icons" aria-hidden="true">storefront</span>
+          <span><strong>Retirada</strong><small>Buscar na unidade escolhida</small></span>
+          <em>Grátis</em>
+        </button>
+
+        <button
+          class="fulfillment-option"
+          type="button"
+          [class.is-active]="store.selectedFulfillment() === 'delivery'"
+          (click)="store.setFulfillment('delivery')"
+        >
+          <span class="material-icons" aria-hidden="true">delivery_dining</span>
+          <span><strong>Entrega</strong><small>Receber no endereço cadastrado</small></span>
+          <em>{{ store.money(6) }}</em>
+        </button>
+      </section>
+
+      <section class="cart-list" aria-label="Itens no carrinho">
+        @for (item of store.cart(); track item.product.id) {
+          <article class="cart-item">
+            <img [src]="item.product.image" [alt]="item.product.name" />
+            <div>
+              <h2>{{ item.product.name }}</h2>
+              <p>{{ item.product.description }}</p>
+              <strong>{{ store.money(item.product.price * item.quantity) }}</strong>
+            </div>
+            <div class="quantity-control" aria-label="Quantidade">
+              <button type="button" (click)="store.decrease(item.product.id)">-</button>
+              <span>{{ item.quantity }}</span>
+              <button type="button" (click)="store.increase(item.product.id)">+</button>
+            </div>
+          </article>
+        }
+      </section>
+
+      <article class="summary-card">
+        <div><span>Subtotal</span><strong>{{ store.money(store.subtotal()) }}</strong></div>
+        <div>
+          <span>{{ store.selectedFulfillment() === 'pickup' ? 'Retirada' : 'Taxa de entrega' }}</span>
+          <strong [class.free-text]="store.selectedFulfillment() === 'pickup'">
+            {{ store.selectedFulfillment() === 'pickup' ? 'Grátis' : store.money(store.deliveryFee()) }}
+          </strong>
+        </div>
+        <div class="summary-total"><span>Total</span><strong>{{ store.money(store.total()) }}</strong></div>
+      </article>
+
+      <a class="primary-button" routerLink="/pagamento">
+        Ir para pagamento
+        <span class="material-icons" aria-hidden="true">arrow_forward</span>
+      </a>
+    }
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <a routerLink="/cardapio"><span class="material-icons">restaurant_menu</span>Cardápio</a>
+    <a routerLink="/carrinho" class="is-active"><span class="material-icons">shopping_basket</span>Carrinho</a>
+    <a routerLink="/pedidos"><span class="material-icons">receipt_long</span>Pedidos</a>
+    <a routerLink="/perfil"><span class="material-icons">person</span>Perfil</a>
+  </nav>
+</main>

@@ -1,0 +1,111 @@
+<main class="app-screen">
+  <header class="app-topbar">
+    <a class="icon-button" routerLink="/unidades" aria-label="Trocar unidade">
+      <span class="material-icons" aria-hidden="true">storefront</span>
+    </a>
+    <strong class="brand-mini">RAÍZES DO NORDESTE</strong>
+    <a class="icon-button cart-link" routerLink="/carrinho" aria-label="Abrir carrinho">
+      <span class="material-icons" aria-hidden="true">shopping_basket</span>
+      @if (store.cartCount() > 0) {
+        <span class="cart-badge">{{ store.cartCount() }}</span>
+      }
+    </a>
+  </header>
+
+  <section class="content-stack">
+    <div class="hero-copy">
+      <span>{{ store.selectedUnit()?.name ?? 'Selecione uma unidade' }}</span>
+      <h1>Cardápio</h1>
+      <p>{{ store.selectedUnit()?.highlight ?? 'Escolha uma unidade para ver disponibilidade.' }}</p>
+    </div>
+
+    <section class="promo-carousel" aria-label="Promoções">
+      <div
+        class="promo-carousel__track"
+        [style.transform]="'translateX(-' + activePromotionIndex() * 100 + '%)'"
+      >
+        @for (promotion of promotions; track promotion.title) {
+          <article class="promo-card">
+            <div>
+              <span>{{ promotion.label }}</span>
+              <strong>{{ promotion.title }}</strong>
+              <small>{{ promotion.description }}</small>
+            </div>
+            <span class="promo-price">{{ promotion.price }}</span>
+          </article>
+        }
+      </div>
+      <div class="promo-dots" aria-hidden="true">
+        @for (promotion of promotions; track promotion.title; let index = $index) {
+          <span [class.is-active]="index === activePromotionIndex()"></span>
+        }
+      </div>
+    </section>
+
+    @if (store.selectedUnit()) {
+      <a class="unit-switch" routerLink="/unidades">
+        <span class="material-icons" aria-hidden="true">location_on</span>
+        {{ store.selectedUnit()?.address }}
+      </a>
+    }
+
+    <nav class="category-tabs" aria-label="Categorias do cardápio">
+      @for (category of categories; track category) {
+        <button
+          type="button"
+          [class.is-active]="category === activeCategory"
+          (click)="selectCategory(category)"
+        >
+          {{ category }}
+        </button>
+      }
+    </nav>
+
+    <div class="section-heading">
+      <h2>Cardápio</h2>
+      <span>{{ filteredItems().length }} itens</span>
+    </div>
+
+    <section class="menu-list" aria-label="Itens do cardápio">
+      @for (item of filteredItems(); track item.id) {
+        <article class="menu-item">
+          <img [src]="item.image" [alt]="item.name" />
+          <div class="menu-item__body">
+            <div>
+              <div class="menu-item__title">
+                <h3>{{ item.name }}</h3>
+                @if (item.badge) {
+                  <span>{{ item.badge }}</span>
+                }
+              </div>
+              <p>{{ item.description }}</p>
+            </div>
+            <div class="menu-item__footer">
+              <div class="menu-item__price">
+                <strong>{{ store.money(item.price) }}</strong>
+                <span class="points-chip">+{{ item.points }} pts</span>
+              </div>
+              <button class="mini-action" type="button" (click)="store.addToCart(item)">
+                <span class="material-icons" aria-hidden="true">add</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      } @empty {
+        <article class="empty-state">
+          <span class="material-icons" aria-hidden="true">restaurant_menu</span>
+          <h2>Nenhum item nesta categoria</h2>
+          <p>Troque a categoria ou escolha outra unidade da rede.</p>
+          <a class="primary-button" routerLink="/unidades">Trocar unidade</a>
+        </article>
+      }
+    </section>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <a routerLink="/cardapio" class="is-active"><span class="material-icons">restaurant_menu</span>Cardápio</a>
+    <a routerLink="/carrinho"><span class="material-icons">shopping_basket</span>Carrinho</a>
+    <a routerLink="/pedidos"><span class="material-icons">receipt_long</span>Pedidos</a>
+    <a routerLink="/perfil"><span class="material-icons">person</span>Perfil</a>
+  </nav>
+</main>

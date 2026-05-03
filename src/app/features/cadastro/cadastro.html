@@ -1,0 +1,164 @@
+<main class="auth-page" aria-labelledby="register-title">
+  <section class="auth-panel" aria-label="Cadastro no sistema Raízes do Nordeste">
+    <header class="brand">
+      <div class="brand__mark" aria-hidden="true">
+        <span class="material-icons">restaurant</span>
+      </div>
+      <p class="brand__name">Raízes do Nordeste</p>
+    </header>
+
+    <div class="auth-copy">
+      <h1 id="register-title">Criar conta</h1>
+      <p>Preencha seus dados básicos para cadastrar.</p>
+    </div>
+
+    <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="submitRegister()" autocomplete="on" novalidate>
+      <div
+        class="field"
+        [class.field--invalid]="registerForm.controls.name.invalid && registerForm.controls.name.touched"
+      >
+        <label for="name">Nome completo</label>
+        <input id="name" type="text" name="name" placeholder="Seu nome" autocomplete="name" formControlName="name" />
+        @if (registerForm.controls.name.hasError('required') && registerForm.controls.name.touched) {
+          <p class="error-message">Informe seu nome.</p>
+        } @else if (registerForm.controls.name.hasError('minlength') && registerForm.controls.name.touched) {
+          <p class="error-message">Digite pelo menos 3 caracteres.</p>
+        }
+      </div>
+
+      <div
+        class="field"
+        [class.field--invalid]="registerForm.controls.email.invalid && registerForm.controls.email.touched"
+      >
+        <label for="email">E-mail</label>
+        <input id="email" type="email" name="email" placeholder="nome@exemplo.com" autocomplete="email" formControlName="email" />
+        @if (registerForm.controls.email.hasError('required') && registerForm.controls.email.touched) {
+          <p class="error-message">Informe seu e-mail.</p>
+        } @else if (registerForm.controls.email.hasError('email') && registerForm.controls.email.touched) {
+          <p class="error-message">Digite um e-mail válido.</p>
+        }
+      </div>
+
+      <div
+        class="field"
+        [class.field--invalid]="registerForm.controls.phone.invalid && registerForm.controls.phone.touched"
+      >
+        <label for="phone">Telefone</label>
+        <input id="phone" type="tel" name="phone" placeholder="(84) 99999-9999" autocomplete="tel" formControlName="phone" />
+        @if (registerForm.controls.phone.hasError('required') && registerForm.controls.phone.touched) {
+          <p class="error-message">Informe seu telefone.</p>
+        } @else if (registerForm.controls.phone.hasError('pattern') && registerForm.controls.phone.touched) {
+          <p class="error-message">Digite um telefone válido com DDD.</p>
+        }
+      </div>
+
+      <div
+        class="field"
+        [class.field--invalid]="registerForm.controls.password.invalid && registerForm.controls.password.touched"
+      >
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          placeholder="********"
+          autocomplete="new-password"
+          formControlName="password"
+        />
+        @if (registerForm.controls.password.hasError('required') && registerForm.controls.password.touched) {
+          <p class="error-message">Crie uma senha.</p>
+        } @else if (registerForm.controls.password.hasError('minlength') && registerForm.controls.password.touched) {
+          <p class="error-message">A senha precisa ter pelo menos 6 caracteres.</p>
+        }
+      </div>
+
+      <div
+        class="field"
+        [class.field--invalid]="
+          (registerForm.controls.confirmPassword.invalid || registerForm.hasError('passwordsMismatch')) &&
+          registerForm.controls.confirmPassword.touched
+        "
+      >
+        <label for="confirmPassword">Confirmar senha</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          name="confirmPassword"
+          placeholder="********"
+          autocomplete="new-password"
+          formControlName="confirmPassword"
+        />
+        @if (registerForm.controls.confirmPassword.hasError('required') && registerForm.controls.confirmPassword.touched) {
+          <p class="error-message">Confirme sua senha.</p>
+        } @else if (registerForm.hasError('passwordsMismatch') && registerForm.controls.confirmPassword.touched) {
+          <p class="error-message">As senhas precisam ser iguais.</p>
+        }
+      </div>
+
+      <label
+        class="privacy-check"
+        [class.privacy-check--invalid]="registerForm.controls.privacy.invalid && registerForm.controls.privacy.touched"
+      >
+        <input type="checkbox" name="privacy" formControlName="privacy" />
+        <span>
+          Concordo com a
+          <button class="privacy-link" type="button" (click)="openPrivacyModal()">Política de Privacidade</button>
+          e autorizo o processamento
+          dos meus dados conforme a LGPD.
+        </span>
+      </label>
+      @if (registerForm.controls.privacy.hasError('required') && registerForm.controls.privacy.touched) {
+        <p class="error-message error-message--check">Aceite a política de privacidade para criar sua conta.</p>
+      }
+
+      <button class="submit-button" type="submit">
+        Cadastrar
+        <span class="material-icons" aria-hidden="true">arrow_forward</span>
+      </button>
+    </form>
+
+    <p class="signup-copy">
+      Já tem cadastro?
+      <a routerLink="/inicio">Entrar</a>
+    </p>
+  </section>
+
+  @if (isPrivacyModalOpen()) {
+    <div class="modal-backdrop" role="presentation" (click)="closePrivacyModal()">
+      <section
+        class="privacy-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="privacy-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header>
+          <div>
+            <span>LGPD</span>
+            <h2 id="privacy-title">Política de Privacidade</h2>
+          </div>
+          <button class="icon-button" type="button" aria-label="Fechar termos" (click)="closePrivacyModal()">
+            <span class="material-icons" aria-hidden="true">x</span>
+          </button>
+        </header>
+
+        <div class="privacy-modal__content">
+          <p>
+            A Raízes do Nordeste utiliza seus dados apenas para criar sua conta, autenticar acesso,
+            registrar pedidos, selecionar unidade, simular pagamentos e operar o programa de fidelidade.
+          </p>
+          <p>
+            Podemos tratar nome, e-mail, telefone, unidade escolhida, itens do pedido, forma de
+            pagamento e histórico de pontos. Dados sensíveis não são solicitados neste cadastro.
+          </p>
+          <p>
+            Você pode solicitar correção, exclusão, portabilidade ou revogação do consentimento.
+            Quando aplicável, dados operacionais podem ser anonimizados para relatórios da franquia.
+          </p>
+        </div>
+
+        <button class="primary-button" type="button" (click)="closePrivacyModal()">Entendi</button>
+      </section>
+    </div>
+  }
+</main>

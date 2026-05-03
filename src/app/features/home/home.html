@@ -1,0 +1,126 @@
+<main class="auth-page" aria-labelledby="auth-title">
+  <section class="auth-panel" aria-label="Acesso ao sistema Raízes do Nordeste">
+    <header class="brand">
+      <div class="brand__mark" aria-hidden="true">
+        <span class="material-icons">restaurant</span>
+      </div>
+      <p class="brand__name">Raízes do Nordeste</p>
+    </header>
+
+    <div class="auth-copy">
+      <h1 id="auth-title">Bem-vindo</h1>
+      <p>Entre com seus dados para continuar.</p>
+    </div>
+
+    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="submitLogin()" autocomplete="on" novalidate>
+      <div
+        class="field"
+        [class.field--invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
+      >
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          placeholder="nome@exemplo.com"
+          autocomplete="email"
+          formControlName="email"
+        />
+        @if (loginForm.controls.email.hasError('required') && loginForm.controls.email.touched) {
+          <p class="error-message">Informe seu e-mail.</p>
+        } @else if (loginForm.controls.email.hasError('email') && loginForm.controls.email.touched) {
+          <p class="error-message">Digite um e-mail válido.</p>
+        }
+      </div>
+
+      <div
+        class="field"
+        [class.field--invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
+      >
+        <div class="field__top">
+          <label for="password">Senha</label>
+        </div>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          placeholder="********"
+          autocomplete="current-password"
+          formControlName="password"
+        />
+        @if (loginForm.controls.password.hasError('required') && loginForm.controls.password.touched) {
+          <p class="error-message">Informe sua senha.</p>
+        } @else if (loginForm.controls.password.hasError('minlength') && loginForm.controls.password.touched) {
+          <p class="error-message">A senha precisa ter pelo menos 6 caracteres.</p>
+        }
+      </div>
+
+      <label
+        class="privacy-check"
+        [class.privacy-check--invalid]="loginForm.controls.privacy.invalid && loginForm.controls.privacy.touched"
+      >
+        <input type="checkbox" name="privacy" formControlName="privacy" />
+        <span>
+          Concordo com a
+          <button class="privacy-link" type="button" (click)="openPrivacyModal()">Política de Privacidade</button>
+          e autorizo o processamento
+          dos meus dados conforme a LGPD.
+        </span>
+      </label>
+      @if (loginForm.controls.privacy.hasError('required') && loginForm.controls.privacy.touched) {
+        <p class="error-message error-message--check">Aceite a política de privacidade para continuar.</p>
+      }
+
+      <button class="submit-button" type="submit">
+        Entrar
+        <span class="material-icons" aria-hidden="true">arrow_forward</span>
+      </button>
+    </form>
+
+    <p class="signup-copy">
+      Ainda não tem uma conta?
+      <a routerLink="/cadastro">Cadastre-se agora</a>
+    </p>
+
+  </section>
+
+  @if (isPrivacyModalOpen()) {
+    <div class="modal-backdrop" role="presentation" (click)="closePrivacyModal()">
+      <section
+        class="privacy-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="privacy-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header>
+          <div>
+            <span>LGPD</span>
+            <h2 id="privacy-title">Política de Privacidade</h2>
+          </div>
+          <button class="icon-button" type="button" aria-label="Fechar termos" (click)="closePrivacyModal()">
+            <span class="material-icons" aria-hidden="true">x</span>
+          </button>
+        </header>
+
+        <div class="privacy-modal__content">
+          <p>
+            A Raízes do Nordeste utiliza seus dados apenas para autenticar acesso, registrar pedidos,
+            selecionar a unidade, processar pagamentos por parceiros externos e calcular benefícios
+            do programa de fidelidade.
+          </p>
+          <p>
+            Podemos tratar nome, e-mail, telefone, unidade escolhida, itens do pedido, forma de
+            pagamento e histórico de pontos. Dados sensíveis não são solicitados neste fluxo.
+          </p>
+          <p>
+            Você pode solicitar correção, exclusão, portabilidade ou revogação do consentimento.
+            Quando aplicável, dados operacionais podem ser anonimizados para relatórios da franquia.
+          </p>
+        </div>
+
+        <button class="primary-button" type="button" (click)="closePrivacyModal()">Entendi</button>
+      </section>
+    </div>
+  }
+</main>

@@ -1,0 +1,112 @@
+<main class="app-screen">
+  <header class="app-topbar">
+    <a class="icon-button" routerLink="/carrinho" aria-label="Voltar ao carrinho">
+      <span class="material-icons" aria-hidden="true">arrow_back</span>
+    </a>
+    <strong>PAGAMENTO</strong>
+    <a class="icon-button cart-link" routerLink="/carrinho" aria-label="Abrir carrinho">
+      <span class="material-icons" aria-hidden="true">shopping_basket</span>
+      @if (store.cartCount() > 0) {
+        <span class="cart-badge">{{ store.cartCount() }}</span>
+      }
+    </a>
+  </header>
+
+  <section class="content-stack">
+    <div class="section-heading">
+      <h1>Resumo do Pedido</h1>
+      <span>{{ store.cartCount() }} itens</span>
+    </div>
+
+    @if (store.selectedUnit()) {
+      <a class="unit-switch" routerLink="/unidades">
+        <span class="material-icons" aria-hidden="true">
+          {{ store.selectedFulfillment() === 'pickup' ? 'storefront' : 'delivery_dining' }}
+        </span>
+        {{ store.selectedFulfillment() === 'pickup' ? 'Retirada' : 'Entrega' }} - {{ store.selectedUnit()?.name }}
+      </a>
+    }
+
+    @if (store.cart().length === 0) {
+      <article class="empty-state">
+        <span class="material-icons" aria-hidden="true">receipt_long</span>
+        <h2>Nenhum item para pagar</h2>
+        <p>Volte ao cardápio e monte seu pedido.</p>
+        <a class="primary-button" [routerLink]="store.selectedUnit() ? '/cardapio' : '/unidades'">Ver cardápio</a>
+      </article>
+    } @else {
+      <section class="order-preview" aria-label="Resumo do pedido">
+        @for (item of store.cart(); track item.product.id) {
+          <article class="preview-item">
+            <img [src]="item.product.image" [alt]="item.product.name" />
+            <div>
+              <h2>{{ item.quantity }}x {{ item.product.name }}</h2>
+              <p>{{ item.product.description }}</p>
+            </div>
+            <strong>{{ store.money(item.product.price * item.quantity) }}</strong>
+          </article>
+        }
+      </section>
+
+      <article class="summary-card">
+        <div><span>Subtotal</span><strong>{{ store.money(store.subtotal()) }}</strong></div>
+        <div>
+          <span>{{ store.selectedFulfillment() === 'pickup' ? 'Retirada' : 'Taxa de entrega' }}</span>
+          <strong [class.free-text]="store.selectedFulfillment() === 'pickup'">
+            {{ store.selectedFulfillment() === 'pickup' ? 'Grátis' : store.money(store.deliveryFee()) }}
+          </strong>
+        </div>
+        <div class="summary-total"><span>Total</span><strong>{{ store.money(store.total()) }}</strong></div>
+      </article>
+
+      <div class="section-heading">
+        <h2>Forma de Pagamento</h2>
+      </div>
+
+      <section class="payment-options" aria-label="Formas de pagamento">
+        @for (method of methods; track method.id) {
+          <button
+            class="payment-option"
+            type="button"
+            [class.is-active]="store.selectedPayment() === method.id"
+            (click)="store.setPaymentMethod(method.id)"
+          >
+            <span class="payment-option__icon material-icons" aria-hidden="true">{{ method.icon }}</span>
+            <span>
+              <strong>{{ method.title }}</strong>
+              <small>{{ method.subtitle }}</small>
+            </span>
+            <span class="radio-dot" aria-hidden="true"></span>
+          </button>
+        }
+      </section>
+
+      @if (store.paymentMessage()) {
+        <p class="payment-message" [class.payment-message--error]="store.paymentState() === 'error'">
+          {{ store.paymentMessage() }}
+        </p>
+      }
+
+      <button
+        class="primary-button"
+        type="button"
+        [disabled]="store.paymentState() === 'loading'"
+        (click)="confirmPayment()"
+      >
+        @if (store.paymentState() === 'loading') {
+          Processando...
+        } @else {
+          Confirmar e Pagar
+          <span class="material-icons" aria-hidden="true">arrow_forward</span>
+        }
+      </button>
+    }
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <a routerLink="/cardapio"><span class="material-icons">restaurant_menu</span>Cardápio</a>
+    <a routerLink="/carrinho" class="is-active"><span class="material-icons">shopping_basket</span>Carrinho</a>
+    <a routerLink="/pedidos"><span class="material-icons">receipt_long</span>Pedidos</a>
+    <a routerLink="/perfil"><span class="material-icons">person</span>Perfil</a>
+  </nav>
+</main>

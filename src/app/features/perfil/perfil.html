@@ -1,0 +1,67 @@
+<main class="app-screen">
+  <header class="app-topbar">
+    <button class="icon-button" type="button" aria-label="Abrir menu">
+      <span class="material-icons" aria-hidden="true">menu</span>
+    </button>
+    <strong class="brand-mini">RAÍZES DO NORDESTE</strong>
+    <a class="icon-button cart-link" routerLink="/carrinho" aria-label="Abrir carrinho">
+      <span class="material-icons" aria-hidden="true">shopping_basket</span>
+      @if (store.cartCount() > 0) {
+        <span class="cart-badge">{{ store.cartCount() }}</span>
+      }
+    </a>
+  </header>
+
+  <section class="content-stack">
+    <div class="hero-copy hero-copy--center">
+      <h1>Seus pontos</h1>
+      <p>pontos do programa de fidelidade</p>
+    </div>
+
+    <article class="points-card">
+      <span>Pontos acumulados</span>
+      <strong>1.450 <small>pts</small></strong>
+    </article>
+
+    <div class="section-heading">
+      <h2>Prêmios Ativos</h2>
+      <a routerLink="/cardapio">Ver todos</a>
+    </div>
+
+    <section class="reward-list" aria-label="Prêmios ativos">
+      <article class="reward-card">
+        <img src="/acaraje.jpg" alt="Acarajé Especial" />
+        <div>
+          <h3>Acarajé Especial</h3>
+          <p>Resgate com 500 pts</p>
+          <button type="button">Resgatar</button>
+        </div>
+      </article>
+      <article class="reward-card">
+        <img src="/suco.jpg" alt="Suco" />
+        <div>
+          <h3>Suco 500ml</h3>
+          <p>Resgate com 250 pts</p>
+          <button type="button">Resgatar</button>
+        </div>
+      </article>
+    </section>
+
+    <div class="section-heading">
+      <h2>Histórico de Pontos</h2>
+    </div>
+
+    <section class="history-list" aria-label="Histórico de pontos">
+      <article><span class="material-icons">restaurant</span><div><strong>Baião de Dois G</strong><small>12 de Out, 2025</small></div><em>-800 pts</em></article>
+      <article><span class="material-icons">restaurant_menu</span><div><strong>Pedido #8829</strong><small>08 de Out, 2025</small></div><em class="positive">+120 pts</em></article>
+      <article><span class="material-icons">local_offer</span><div><strong>Bolo de Rolo</strong><small>25 de Set, 2025</small></div><em>-300 pts</em></article>
+    </section>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <a routerLink="/cardapio"><span class="material-icons">restaurant_menu</span>Cardápio</a>
+    <a routerLink="/carrinho"><span class="material-icons">shopping_basket</span>Carrinho</a>
+    <a routerLink="/pedidos"><span class="material-icons">receipt_long</span>Pedidos</a>
+    <a routerLink="/perfil" class="is-active"><span class="material-icons">person</span>Perfil</a>
+  </nav>
+</main>
