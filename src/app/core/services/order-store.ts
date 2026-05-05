@@ -45,6 +45,8 @@ export interface Order {
   unit: Unit;
   fulfillment: FulfillmentMethod;
   deliveryFee: number;
+  loyaltyDiscount: number;
+  loyaltyPointsUsed: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -155,6 +157,8 @@ export class OrderStore {
   readonly selectedUnit = signal<Unit | null>(null);
   readonly cart = signal<CartItem[]>([]);
   readonly activeOrder = signal<Order | null>(null);
+  readonly loyaltyPointsBalance = signal(1450);
+  readonly useLoyaltyPoints = signal(false);
 
   readonly selectedPayment = signal<PaymentMethod>('card');
   readonly selectedFulfillment = signal<FulfillmentMethod>('pickup');
@@ -173,7 +177,17 @@ export class OrderStore {
     this.subtotal() > 0 && this.selectedFulfillment() === 'delivery' ? 6 : 0,
   );
 
-  readonly total = computed(() => this.subtotal() + this.deliveryFee());
+  readonly loyaltyDiscount = computed(() => {
+    if (!this.useLoyaltyPoints() || this.subtotal() === 0) {
+      return 0;
+    }
+
+    return Math.min(this.subtotal(), this.loyaltyPointsBalance() / 100);
+  });
+
+  readonly loyaltyPointsUsed = computed(() => Math.round(this.loyaltyDiscount() * 100));
+
+  readonly total = computed(() => this.subtotal() - this.loyaltyDiscount() + this.deliveryFee());
 
   readonly availableMenuItems = computed(() => {
     const unit = this.selectedUnit();
@@ -197,6 +211,7 @@ export class OrderStore {
 
     if (previousUnit?.id !== nextUnit.id) {
       this.cart.set([]);
+      this.useLoyaltyPoints.set(false);
       this.paymentState.set('idle');
       this.paymentMessage.set('');
     }
@@ -234,6 +249,10 @@ export class OrderStore {
         )
         .filter((item) => item.quantity > 0),
     );
+
+    if (this.cart().length === 0) {
+      this.useLoyaltyPoints.set(false);
+    }
   }
   
   setPaymentMethod(method: PaymentMethod): void {
@@ -244,6 +263,10 @@ export class OrderStore {
 
   setFulfillment(method: FulfillmentMethod): void {
     this.selectedFulfillment.set(method);
+  }
+
+  setUseLoyaltyPoints(shouldUse: boolean): void {
+    this.useLoyaltyPoints.set(shouldUse);
   }
 
   async confirmPayment(forceFailure = false): Promise<boolean> {
@@ -271,6 +294,9 @@ export class OrderStore {
       this.paymentMessage.set('Pagamento recusado. Tente Pix ou outro cartão.');
       return false;
     }
+
+    const loyaltyDiscount = this.loyaltyDiscount();
+    const loyaltyPointsUsed = this.loyaltyPointsUsed();
     const order: Order = {
       code: '#RN-9284',
       createdAt: new Date(),
@@ -280,9 +306,13 @@ export class OrderStore {
       unit,
       fulfillment: this.selectedFulfillment(),
       deliveryFee: this.deliveryFee(),
+      loyaltyDiscount,
+      loyaltyPointsUsed,
     };
 
     this.activeOrder.set(order);
+    this.loyaltyPointsBalance.update((points) => points - loyaltyPointsUsed);
+    this.useLoyaltyPoints.set(false);
     this.cart.set([]);
     this.paymentState.set('success');
     this.paymentMessage.set('Pagamento aprovado. Pedido enviado para a cozinha.');
@@ -291,6 +321,7 @@ export class OrderStore {
 
   resetFlow(): void {
     this.cart.set([]);
+    this.useLoyaltyPoints.set(false);
     this.paymentState.set('idle');
     this.paymentMessage.set('');
   }
@@ -300,5 +331,9 @@ export class OrderStore {
       style: 'currency',
       currency: 'BRL',
     }).format(value);
+  }
+
+  points(value: number): string {
+    return new Intl.NumberFormat('pt-BR').format(value);
   }
 }

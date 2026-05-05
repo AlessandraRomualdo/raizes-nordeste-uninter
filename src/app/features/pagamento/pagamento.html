@@ -50,6 +50,12 @@
 
       <article class="summary-card">
         <div><span>Subtotal</span><strong>{{ store.money(store.subtotal()) }}</strong></div>
+        @if (store.loyaltyDiscount() > 0) {
+          <div>
+            <span>Pontos usados</span>
+            <strong class="discount-text">-{{ store.money(store.loyaltyDiscount()) }}</strong>
+          </div>
+        }
         <div>
           <span>{{ store.selectedFulfillment() === 'pickup' ? 'Retirada' : 'Taxa de entrega' }}</span>
           <strong [class.free-text]="store.selectedFulfillment() === 'pickup'">

@@ -67,6 +67,12 @@
             {{ store.activeOrder()?.fulfillment === 'pickup' ? 'Grátis' : store.money(store.activeOrder()?.deliveryFee ?? 0) }}
           </strong>
         </div>
+        @if ((store.activeOrder()?.loyaltyDiscount ?? 0) > 0) {
+          <div>
+            <span>Pontos usados</span>
+            <strong class="discount-text">-{{ store.money(store.activeOrder()?.loyaltyDiscount ?? 0) }}</strong>
+          </div>
+        }
       </article>
 
       <section class="pickup-card" aria-label="Local de retirada">

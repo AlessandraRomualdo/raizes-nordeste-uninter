@@ -72,8 +72,34 @@
         }
       </section>
 
+      <button
+        class="loyalty-option"
+        type="button"
+        [class.is-active]="store.useLoyaltyPoints()"
+        [disabled]="store.loyaltyPointsBalance() === 0"
+        (click)="store.setUseLoyaltyPoints(!store.useLoyaltyPoints())"
+      >
+        <span class="material-icons" aria-hidden="true">workspace_premium</span>
+        <span>
+          <strong>Usar pontos de fidelidade</strong>
+          <small>
+            {{ store.points(store.loyaltyPointsBalance()) }} pts disponiveis
+            @if (store.useLoyaltyPoints()) {
+              - desconto de {{ store.money(store.loyaltyDiscount()) }}
+            }
+          </small>
+        </span>
+        <span class="radio-dot" aria-hidden="true"></span>
+      </button>
+
       <article class="summary-card">
         <div><span>Subtotal</span><strong>{{ store.money(store.subtotal()) }}</strong></div>
+        @if (store.loyaltyDiscount() > 0) {
+          <div>
+            <span>Pontos usados</span>
+            <strong class="discount-text">-{{ store.money(store.loyaltyDiscount()) }}</strong>
+          </div>
+        }
         <div>
           <span>{{ store.selectedFulfillment() === 'pickup' ? 'Retirada' : 'Taxa de entrega' }}</span>
           <strong [class.free-text]="store.selectedFulfillment() === 'pickup'">
