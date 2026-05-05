@@ -2,6 +2,14 @@ import { computed, Injectable, signal } from '@angular/core';
 
 export type PaymentMethod = 'card' | 'pix';
 export type PaymentState = 'idle' | 'loading' | 'success' | 'error';
+export type PaymentStep =
+  | 'idle'
+  | 'redirecting'
+  | 'gateway'
+  | 'authorizing'
+  | 'returning'
+  | 'success'
+  | 'error';
 export type FulfillmentMethod = 'pickup' | 'delivery';
 
 export interface Unit {
@@ -163,7 +171,10 @@ export class OrderStore {
   readonly selectedPayment = signal<PaymentMethod>('card');
   readonly selectedFulfillment = signal<FulfillmentMethod>('pickup');
   readonly paymentState = signal<PaymentState>('idle');
+  readonly paymentStep = signal<PaymentStep>('idle');
   readonly paymentMessage = signal('');
+  readonly paymentReference = signal('');
+  readonly paymentProgress = signal(0);
 
   readonly cartCount = computed(() =>
     this.cart().reduce((total, item) => total + item.quantity, 0),
@@ -213,7 +224,10 @@ export class OrderStore {
       this.cart.set([]);
       this.useLoyaltyPoints.set(false);
       this.paymentState.set('idle');
+      this.paymentStep.set('idle');
       this.paymentMessage.set('');
+      this.paymentReference.set('');
+      this.paymentProgress.set(0);
     }
   }
 
@@ -258,7 +272,10 @@ export class OrderStore {
   setPaymentMethod(method: PaymentMethod): void {
     this.selectedPayment.set(method);
     this.paymentState.set('idle');
+    this.paymentStep.set('idle');
     this.paymentMessage.set('');
+    this.paymentReference.set('');
+    this.paymentProgress.set(0);
   }
 
   setFulfillment(method: FulfillmentMethod): void {
@@ -274,26 +291,59 @@ export class OrderStore {
 
     if (!unit) {
       this.paymentState.set('error');
+      this.paymentStep.set('error');
       this.paymentMessage.set('Escolha uma unidade antes de pagar.');
       return false;
     }
 
     if (this.cart().length === 0) {
       this.paymentState.set('error');
+      this.paymentStep.set('error');
       this.paymentMessage.set('Seu carrinho está vazio.');
       return false;
     }
 
     this.paymentState.set('loading');
-    this.paymentMessage.set('Enviando pagamento para aprovação...');
+    this.paymentStep.set('redirecting');
+    this.paymentProgress.set(18);
+    this.paymentReference.set(this.createPaymentReference());
+    this.paymentMessage.set('Redirecionando para o gateway externo simulado...');
 
-    await new Promise((resolve) => setTimeout(resolve, 750));
+    await this.wait(700);
+
+    this.paymentStep.set('gateway');
+    this.paymentProgress.set(46);
+    this.paymentMessage.set(
+      this.selectedPayment() === 'pix'
+        ? 'Ambiente externo aberto: QR Pix gerado e aguardando confirmação.'
+        : 'Ambiente externo aberto: validando dados do cartão com a operadora.',
+    );
+
+    await this.wait(900);
+
+    this.paymentStep.set('authorizing');
+    this.paymentProgress.set(72);
+    this.paymentMessage.set(
+      'Pagamento enviado para autorização. Recebendo resposta do provedor...',
+    );
+
+    await this.wait(850);
 
     if (forceFailure) {
       this.paymentState.set('error');
-      this.paymentMessage.set('Pagamento recusado. Tente Pix ou outro cartão.');
+      this.paymentStep.set('error');
+      this.paymentProgress.set(100);
+      this.paymentMessage.set(
+        'Pagamento recusado pelo provedor externo. Tente Pix ou outro cartão.',
+      );
       return false;
     }
+
+    this.paymentStep.set('returning');
+    this.paymentProgress.set(92);
+    this.paymentMessage.set('Pagamento aprovado no gateway. Retornando para criar o pedido...');
+
+    await this.wait(600);
 
     const loyaltyDiscount = this.loyaltyDiscount();
     const loyaltyPointsUsed = this.loyaltyPointsUsed();
@@ -315,6 +365,8 @@ export class OrderStore {
     this.useLoyaltyPoints.set(false);
     this.cart.set([]);
     this.paymentState.set('success');
+    this.paymentStep.set('success');
+    this.paymentProgress.set(100);
     this.paymentMessage.set('Pagamento aprovado. Pedido enviado para a cozinha.');
     return true;
   }
@@ -323,7 +375,10 @@ export class OrderStore {
     this.cart.set([]);
     this.useLoyaltyPoints.set(false);
     this.paymentState.set('idle');
+    this.paymentStep.set('idle');
     this.paymentMessage.set('');
+    this.paymentReference.set('');
+    this.paymentProgress.set(0);
   }
 
   money(value: number): string {
@@ -335,5 +390,16 @@ export class OrderStore {
 
   points(value: number): string {
     return new Intl.NumberFormat('pt-BR').format(value);
+  }
+
+  private wait(milliseconds: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  }
+
+  private createPaymentReference(): string {
+    const timestamp = Date.now().toString().slice(-6);
+    const method = this.selectedPayment() === 'pix' ? 'PIX' : 'CARD';
+
+    return `RN-PAY-${method}-${timestamp}`;
   }
 }

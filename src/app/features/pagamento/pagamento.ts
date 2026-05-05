@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { OrderStore, PaymentMethod } from '../../core/services/order-store';
+import {
+  OrderStore,
+  PaymentMethod,
+  PaymentStep,
+} from '../../core/services/order-store';
 
 @Component({
   selector: 'app-pagamento',
@@ -33,6 +37,33 @@ export class Pagamento {
     },
   ];
 
+  protected readonly gatewaySteps: {
+    id: PaymentStep;
+    title: string;
+    icon: string;
+  }[] = [
+    {
+      id: 'redirecting',
+      title: 'Redirecionamento',
+      icon: 'open_in_new',
+    },
+    {
+      id: 'gateway',
+      title: 'Ambiente externo',
+      icon: 'account_balance_wallet',
+    },
+    {
+      id: 'authorizing',
+      title: 'Autorização',
+      icon: 'verified_user',
+    },
+    {
+      id: 'returning',
+      title: 'Retorno ao app',
+      icon: 'keyboard_return',
+    },
+  ];
+
   protected async confirmPayment(forceFailure = false): Promise<void> {
     const approved = await this.store.confirmPayment(forceFailure);
 
@@ -41,5 +72,23 @@ export class Pagamento {
         this.router.navigateByUrl('/pedidos');
       }, 450);
     }
+  }
+
+  protected paymentStepClass(step: PaymentStep): string {
+    const currentStep = this.store.paymentStep();
+    const currentIndex = this.gatewaySteps.findIndex(
+      (item) => item.id === currentStep,
+    );
+    const stepIndex = this.gatewaySteps.findIndex((item) => item.id === step);
+
+    if (currentStep === step) {
+      return 'is-current';
+    }
+
+    if (currentStep === 'success' || currentIndex > stepIndex) {
+      return 'is-done';
+    }
+
+    return '';
   }
 }

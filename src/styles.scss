@@ -889,6 +889,167 @@ body {
   background: #bf3600;
 }
 
+.gateway-simulation {
+  display: grid;
+  gap: 0.75rem;
+  border: 1px solid rgba(191, 54, 0, 0.12);
+  border-radius: 1rem;
+  padding: 0.9rem;
+  background: #fffaf0;
+}
+
+.gateway-simulation header {
+  display: grid;
+  grid-template-columns: 2.35rem 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.gateway-simulation header > .material-icons {
+  width: 2.35rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #bf3600;
+  background: #ffe2c9;
+  font-size: 1.1rem;
+}
+
+.gateway-simulation strong,
+.gateway-simulation small {
+  display: block;
+}
+
+.gateway-simulation header strong {
+  color: #3f332b;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.gateway-simulation header small {
+  margin-top: 0.12rem;
+  color: #776b60;
+  font-size: 0.62rem;
+  line-height: 1.3;
+}
+
+.gateway-simulation em {
+  color: #bf3600;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.payment-progress {
+  height: 0.48rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #efe3d0;
+}
+
+.payment-progress span {
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: #bf3600;
+  transition: width 280ms ease;
+}
+
+.gateway-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gateway-steps li {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1.55rem 1fr;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  color: #9d8e7c;
+  background: #fff5e7;
+}
+
+.gateway-steps .material-icons {
+  width: 1.55rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: inherit;
+  background: #f0e3d2;
+  font-size: 0.9rem;
+}
+
+.gateway-steps strong {
+  overflow-wrap: anywhere;
+  color: inherit;
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.gateway-steps li.is-current {
+  color: #bf3600;
+  background: #fff0e6;
+}
+
+.gateway-steps li.is-done {
+  color: #1f7a43;
+  background: #edf8f0;
+}
+
+.gateway-steps li.is-current .material-icons {
+  color: #fff;
+  background: #bf3600;
+}
+
+.gateway-steps li.is-done .material-icons {
+  color: #fff;
+  background: #1f7a43;
+}
+
+.gateway-simulation.is-success {
+  border-color: rgba(47, 155, 83, 0.32);
+  background: #f4fbf1;
+}
+
+.gateway-simulation.is-success header > .material-icons {
+  color: #1f7a43;
+  background: #dff3e6;
+}
+
+.gateway-simulation.is-success em {
+  color: #1f7a43;
+}
+
+.gateway-simulation.is-error {
+  border-color: rgba(191, 54, 0, 0.28);
+  background: #fff0e6;
+}
+
+.payment-actions {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.payment-actions .primary-button,
+.payment-actions .ghost-button {
+  width: 100%;
+}
+
+.ghost-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
 .loyalty-option.is-active .radio-dot {
   border-color: #1f7a43;
   background: #1f7a43;

@@ -87,25 +87,72 @@
         }
       </section>
 
+      <section
+        class="gateway-simulation"
+        [class.is-loading]="store.paymentState() === 'loading'"
+        [class.is-success]="store.paymentState() === 'success'"
+        [class.is-error]="store.paymentState() === 'error'"
+        aria-label="Gateway externo simulado"
+      >
+        <header>
+          <span class="material-icons" aria-hidden="true">payments</span>
+          <div>
+            <strong>Gateway externo simulado</strong>
+            <small>
+              @if (store.paymentReference()) {
+                Transação {{ store.paymentReference() }}
+              } @else {
+                Pronto para abrir o provedor de pagamento
+              }
+            </small>
+          </div>
+          <em>{{ store.paymentProgress() }}%</em>
+        </header>
+
+        <div class="payment-progress" aria-hidden="true">
+          <span [style.width.%]="store.paymentProgress()"></span>
+        </div>
+
+        <ol class="gateway-steps">
+          @for (step of gatewaySteps; track step.id) {
+            <li [class]="paymentStepClass(step.id)">
+              <span class="material-icons" aria-hidden="true">{{ step.icon }}</span>
+              <strong>{{ step.title }}</strong>
+            </li>
+          }
+        </ol>
+      </section>
+
       @if (store.paymentMessage()) {
         <p class="payment-message" [class.payment-message--error]="store.paymentState() === 'error'">
           {{ store.paymentMessage() }}
         </p>
       }
 
-      <button
-        class="primary-button"
-        type="button"
-        [disabled]="store.paymentState() === 'loading'"
-        (click)="confirmPayment()"
-      >
-        @if (store.paymentState() === 'loading') {
-          Processando...
-        } @else {
-          Confirmar e Pagar
-          <span class="material-icons" aria-hidden="true">arrow_forward</span>
-        }
-      </button>
+      <div class="payment-actions">
+        <button
+          class="primary-button"
+          type="button"
+          [disabled]="store.paymentState() === 'loading'"
+          (click)="confirmPayment()"
+        >
+          @if (store.paymentState() === 'loading') {
+            Processando no gateway...
+          } @else {
+            Pagar 
+            <span class="material-icons" aria-hidden="true">open_in_new</span>
+          }
+        </button>
+
+        <button
+          class="ghost-button"
+          type="button"
+          [disabled]="store.paymentState() === 'loading'"
+          (click)="confirmPayment(true)"
+        >
+          Simular recusa
+        </button>
+      </div>
     }
   </section>
 
