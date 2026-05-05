@@ -22,10 +22,6 @@ export class Home {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(6)],
     }),
-    privacy: new FormControl(false, {
-      nonNullable: true,
-      validators: [Validators.requiredTrue],
-    }),
   });
 
   protected submitLogin(): void {

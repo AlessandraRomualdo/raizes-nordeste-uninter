@@ -55,22 +55,6 @@
         }
       </div>
 
-      <label
-        class="privacy-check"
-        [class.privacy-check--invalid]="loginForm.controls.privacy.invalid && loginForm.controls.privacy.touched"
-      >
-        <input type="checkbox" name="privacy" formControlName="privacy" />
-        <span>
-          Concordo com a
-          <button class="privacy-link" type="button" (click)="openPrivacyModal()">Política de Privacidade</button>
-          e autorizo o processamento
-          dos meus dados conforme a LGPD.
-        </span>
-      </label>
-      @if (loginForm.controls.privacy.hasError('required') && loginForm.controls.privacy.touched) {
-        <p class="error-message error-message--check">Aceite a política de privacidade para continuar.</p>
-      }
-
       <button class="submit-button" type="submit">
         Entrar
         <span class="material-icons" aria-hidden="true">arrow_forward</span>
@@ -83,44 +67,4 @@
     </p>
 
   </section>
-
-  @if (isPrivacyModalOpen()) {
-    <div class="modal-backdrop" role="presentation" (click)="closePrivacyModal()">
-      <section
-        class="privacy-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="privacy-title"
-        (click)="$event.stopPropagation()"
-      >
-        <header>
-          <div>
-            <span>LGPD</span>
-            <h2 id="privacy-title">Política de Privacidade</h2>
-          </div>
-          <button class="icon-button" type="button" aria-label="Fechar termos" (click)="closePrivacyModal()">
-            <span class="material-icons" aria-hidden="true">x</span>
-          </button>
-        </header>
-
-        <div class="privacy-modal__content">
-          <p>
-            A Raízes do Nordeste utiliza seus dados apenas para autenticar acesso, registrar pedidos,
-            selecionar a unidade, processar pagamentos por parceiros externos e calcular benefícios
-            do programa de fidelidade.
-          </p>
-          <p>
-            Podemos tratar nome, e-mail, telefone, unidade escolhida, itens do pedido, forma de
-            pagamento e histórico de pontos. Dados sensíveis não são solicitados neste fluxo.
-          </p>
-          <p>
-            Você pode solicitar correção, exclusão, portabilidade ou revogação do consentimento.
-            Quando aplicável, dados operacionais podem ser anonimizados para relatórios da franquia.
-          </p>
-        </div>
-
-        <button class="primary-button" type="button" (click)="closePrivacyModal()">Entendi</button>
-      </section>
-    </div>
-  }
 </main>
