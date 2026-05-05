@@ -1,59 +1,104 @@
-# RaizesDoNordeste
+# Raizes do Nordeste
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+Aplicacao web mobile-first desenvolvida em Angular para simular a experiencia digital de uma rede de comida regional nordestina. O projeto reune autenticacao, selecao de unidade, cardapio, carrinho, pagamento, acompanhamento de pedido e programa de fidelidade em uma interface inspirada em aplicativos de delivery.
 
-## Development server
+## Contexto academico
 
-To start a local development server, run:
+Este projeto foi desenvolvido para a faculdade UNINTER, na materia Projeto Multidisciplinar - Front-End.
 
-```bash
-ng serve
+## Resumo do projeto
+
+O Raizes do Nordeste permite que o usuario entre ou se cadastre, escolha uma unidade disponivel, navegue por produtos do cardapio, adicione itens ao carrinho e finalize um pedido com retirada ou entrega. O fluxo tambem inclui pontos de fidelidade: o cliente visualiza o saldo no perfil e pode aplicar pontos no carrinho para receber desconto no valor da compra.
+
+Os dados da aplicacao sao mockados no servico `OrderStore`, que centraliza unidades, produtos, carrinho, forma de entrega, pagamento, pedido ativo e saldo de pontos. A navegacao usa rotas lazy-loaded para manter cada tela isolada em sua feature.
+
+## Funcionalidades
+
+- Login e cadastro com validacao de formulario.
+- Modal de privacidade nas telas de acesso.
+- Selecao de unidade com disponibilidade e cardapio filtrado.
+- Cardapio por categorias, promocoes e itens com pontuacao.
+- Carrinho com controle de quantidade, retirada ou entrega.
+- Uso de pontos de fidelidade para gerar desconto no pedido.
+- Resumo de pagamento com subtotal, taxa de entrega, desconto e total.
+- Confirmacao de pagamento simulada.
+- Tela de status do pedido com linha do tempo e dados da unidade.
+- Perfil com saldo de pontos, premios ativos e historico.
+
+## Stack
+
+- Angular 21
+- Angular Router
+- Angular Reactive Forms
+- Angular Material
+- TypeScript
+- SCSS
+- Vitest
+
+## Prototipo e diagramas
+
+- Prototipo/FigJam: https://www.figma.com/board/l0gnn9WYvp3kfESGKBy4iD/Untitled?node-id=0-1&p=f
+- Diagramas/Miro: https://miro.com/app/board/uXjVHde3V20=/?share_link_id=605002804178
+
+## Estrutura principal
+
+```text
+src/app
+|-- core
+|   |-- layouts/main-layout
+|   `-- services/order-store.ts
+|-- features
+|   |-- cadastro
+|   |-- cardapio
+|   |-- carrinho
+|   |-- home
+|   |-- pagamento
+|   |-- pedidos
+|   |-- perfil
+|   `-- unidades
+`-- app.routes.ts
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Como executar
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Instale as dependencias:
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Inicie o servidor de desenvolvimento:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Depois acesse:
 
-To build the project run:
+```text
+http://localhost:4200/
+```
+
+## Scripts disponiveis
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Executa o servidor local com `ng serve`.
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Gera a versao de producao no diretorio `dist/`.
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Executa os testes configurados pelo Angular/Vitest.
 
-## Additional Resources
+## Observacoes
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Este projeto usa dados simulados e nao possui integracao real com APIs de pagamento, autenticacao, geolocalizacao ou banco de dados. O objetivo e demonstrar o fluxo completo da experiencia do cliente e a organizacao de uma aplicacao Angular por features.
