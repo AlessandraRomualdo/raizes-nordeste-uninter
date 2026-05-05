@@ -165,7 +165,7 @@ export class OrderStore {
   readonly selectedUnit = signal<Unit | null>(null);
   readonly cart = signal<CartItem[]>([]);
   readonly activeOrder = signal<Order | null>(null);
-  readonly loyaltyPointsBalance = signal(1450);
+  readonly loyaltyPointsBalance = signal(1050);
   readonly useLoyaltyPoints = signal(false);
 
   readonly selectedPayment = signal<PaymentMethod>('card');
